@@ -1,7 +1,7 @@
-package com.example.articlepreview.infra
+package com.example.articlepreview.data
 
-import com.example.articlepreview.infra.model.ArticleDto
-import com.example.articlepreview.infra.model.TagDto
+import com.example.articlepreview.data.model.ArticleDto
+import com.example.articlepreview.data.model.TagDto
 import retrofit2.http.GET
 import retrofit2.http.Query
 

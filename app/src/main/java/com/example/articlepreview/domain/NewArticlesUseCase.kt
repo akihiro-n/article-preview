@@ -4,8 +4,8 @@ import androidx.core.text.HtmlCompat
 import androidx.core.text.HtmlCompat.FROM_HTML_MODE_COMPACT
 import com.example.articlepreview.core.extension.hasSourceCodeBlock
 import com.example.articlepreview.core.extension.imageNodes
-import com.example.articlepreview.infra.ArticleRepository
-import com.example.articlepreview.infra.model.ArticleDto
+import com.example.articlepreview.data.ArticleRepository
+import com.example.articlepreview.data.model.ArticleDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.commonmark.parser.Parser

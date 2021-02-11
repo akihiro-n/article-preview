@@ -1,4 +1,4 @@
-package com.example.articlepreview.infra.model
+package com.example.articlepreview.data.model
 
 data class ArticleDto(
     val title: String,

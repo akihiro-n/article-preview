@@ -1,6 +1,6 @@
-package com.example.articlepreview.infra
+package com.example.articlepreview.data
 
-import com.example.articlepreview.infra.model.ArticleDto
+import com.example.articlepreview.data.model.ArticleDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
