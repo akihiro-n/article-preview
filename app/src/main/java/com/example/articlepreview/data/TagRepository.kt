@@ -20,6 +20,6 @@ class TagRepository @Inject constructor(
     }
 
     fun getPopularTags(perPage: Int = DEFAULT_PER_PAGE, page: Int): Flow<List<TagDto>> = flow {
-        qiitaApi.getTags(perPage, page, SORT_QUERY_COUNT)
+        qiitaApi.getTags("$perPage", "$page", SORT_QUERY_COUNT)
     }
 }

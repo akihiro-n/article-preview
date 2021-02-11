@@ -9,14 +9,14 @@ interface QiitaApi {
 
     @GET("tags")
     suspend fun getTags(
-        @Query("per_page") perPage: Int,
-        @Query("page") page: Int,
+        @Query("per_page") perPage: String,
+        @Query("page") page: String,
         @Query("sort") sort: String
     ): List<TagDto>
 
     @GET("items")
     suspend fun getArticles(
-        @Query("per_page") perPage: Int,
-        @Query("page") page: Int
+        @Query("per_page") perPage: String,
+        @Query("page") page: String
     ): List<ArticleDto>
 }

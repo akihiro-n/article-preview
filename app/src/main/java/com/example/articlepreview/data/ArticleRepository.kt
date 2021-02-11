@@ -14,6 +14,6 @@ class ArticleRepository @Inject constructor(
     }
 
     fun getArticles(perPage: Int = DEFAULT_PER_PAGE, page: Int): Flow<List<ArticleDto>> = flow {
-        qiitaApi.getArticles(perPage, page)
+        qiitaApi.getArticles("$perPage", "$page")
     }
 }

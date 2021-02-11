@@ -4,9 +4,10 @@ import org.commonmark.node.Block
 import org.commonmark.node.Image
 import org.commonmark.node.Node
 
-/** Node内から[Image]を探してリストで返す */
-fun Node.imageNodes(): List<Image> {
-
+/**
+ * Node内から[Image]を探してリストで返す
+ */
+fun Node.imageNodeURLs(): List<String> {
     val images = mutableListOf<Image>()
     var child = firstChild
 
@@ -17,10 +18,12 @@ fun Node.imageNodes(): List<Image> {
         child = child.next
     }
 
-    return images
+    return images.map { it.destination }
 }
 
-/** Node内にソースコードのBlockがあるかどうかを判定 */
+/**
+ * Node内にソースコードのBlockがあるかどうかを判定
+ */
 fun Node.hasSourceCodeBlock(): Boolean {
     var child = firstChild
 
