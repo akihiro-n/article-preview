@@ -5,11 +5,21 @@ import androidx.core.text.HtmlCompat.FROM_HTML_MODE_COMPACT
 import com.example.articlepreview.core.extension.hasSourceCodeBlock
 import com.example.articlepreview.core.extension.imageNodes
 import com.example.articlepreview.infra.ArticleRepository
-import com.example.articlepreview.infra.model.Article
+import com.example.articlepreview.infra.model.ArticleDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import org.commonmark.parser.Parser
 import javax.inject.Inject
+
+data class NewArticle(
+    val title: String,
+    val planeBody: String,
+    val markdownBody: String,
+    val tags: List<String>,
+    val hasSourceCodeBlock: Boolean,
+    val userImage: String,
+    val images: List<String>
+)
 
 class NewArticlesUseCase @Inject constructor(
     private val articleRepository: ArticleRepository,
@@ -23,7 +33,7 @@ class NewArticlesUseCase @Inject constructor(
                 articles.map { it.toState() }
             }
 
-    private fun Article.toState(): NewArticle {
+    private fun ArticleDto.toState(): NewArticle {
 
         val document = parser.parse(body)
 

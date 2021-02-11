@@ -1,7 +1,7 @@
 package com.example.articlepreview.infra.model
 
-data class Article(
+data class ArticleDto(
     val title: String,
-    val tags: List<ArticleTag>,
+    val tags: List<ArticleTagDto>,
     val body: String
 )
