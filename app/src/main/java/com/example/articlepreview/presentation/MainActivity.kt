@@ -1,8 +1,9 @@
-package com.example.articlepreview
+package com.example.articlepreview.presentation
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.example.articlepreview.R
 import com.example.articlepreview.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 

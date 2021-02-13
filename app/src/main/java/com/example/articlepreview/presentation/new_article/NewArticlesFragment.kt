@@ -1,4 +1,4 @@
-package com.example.articlepreview
+package com.example.articlepreview.presentation.new_article
 
 import android.os.Bundle
 import android.view.LayoutInflater

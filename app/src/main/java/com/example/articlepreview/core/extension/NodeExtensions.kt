@@ -7,7 +7,7 @@ import org.commonmark.node.Node
 /**
  * Node内から[Image]を探してリストで返す
  */
-fun Node.imageNodeURLs(): List<String> {
+fun Node.imageNodes(): List<Image> {
     val images = mutableListOf<Image>()
     var child = firstChild
 
@@ -18,7 +18,7 @@ fun Node.imageNodeURLs(): List<String> {
         child = child.next
     }
 
-    return images.map { it.destination }
+    return images
 }
 
 /**

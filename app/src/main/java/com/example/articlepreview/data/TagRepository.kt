@@ -19,7 +19,7 @@ class TagRepository @Inject constructor(
         private const val SORT_QUERY_COUNT = "count"
     }
 
-    fun getPopularTags(perPage: Int = DEFAULT_PER_PAGE, page: Int): Flow<List<TagDto>> = flow {
+    fun getPopularTags(perPage: Int = DEFAULT_PER_PAGE, page: Int = 1): Flow<List<TagDto>> = flow {
         qiitaApi.getTags("$perPage", "$page", SORT_QUERY_COUNT)
     }
 }
