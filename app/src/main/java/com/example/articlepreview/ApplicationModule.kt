@@ -12,7 +12,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import org.commonmark.parser.Parser
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -30,7 +29,7 @@ object ApplicationModule {
     fun provideMoshiConvertorFactory(moshi: Moshi): MoshiConverterFactory =
         MoshiConverterFactory.create(moshi)
 
-    @Singleton
+    @Provides
     fun provideHttpClient(): OkHttpClient =
         OkHttpClient.Builder().also {
             if (BuildConfig.DEBUG) {
@@ -47,7 +46,7 @@ object ApplicationModule {
     ): QiitaApi = Retrofit.Builder()
         .client(httpClient)
         .addConverterFactory(moshiConverterFactory)
-        .baseUrl("")
+        .baseUrl("https://qiita.com/api/v2/")
         .build()
         .create(QiitaApi::class.java)
 }

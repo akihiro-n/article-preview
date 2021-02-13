@@ -12,12 +12,20 @@ import retrofit2.HttpException
 sealed class NewArticleCell {
 
     object Empty : NewArticleCell()
+
     object Loading : NewArticleCell()
 
     data class Tags(val tags: List<TagDto>) : NewArticleCell()
 
     data class NewArticle(
+        /**
+         * 記事のデータ
+         */
         val value: ArticleDto,
+
+        /**
+         * 記事内にソースコードがあるかどうか
+         */
         val hasSourceCodeBlock: Boolean
     ) : NewArticleCell()
 

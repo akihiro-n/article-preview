@@ -1,8 +1,10 @@
 package com.example.articlepreview.data
 
 import com.example.articlepreview.data.model.TagDto
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class TagRepository @Inject constructor(
@@ -19,7 +21,7 @@ class TagRepository @Inject constructor(
         private const val SORT_QUERY_COUNT = "count"
     }
 
-    fun getPopularTags(perPage: Int = DEFAULT_PER_PAGE, page: Int = 1): Flow<List<TagDto>> = flow {
+    fun getPopularTags(perPage: Int = DEFAULT_PER_PAGE, page: Int = 1) = flow<List<TagDto>> {
         qiitaApi.getTags("$perPage", "$page", SORT_QUERY_COUNT)
-    }
+    }.flowOn(Dispatchers.IO)
 }
