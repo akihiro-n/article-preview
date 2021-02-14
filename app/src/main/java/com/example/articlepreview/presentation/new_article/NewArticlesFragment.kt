@@ -38,7 +38,6 @@ class NewArticlesFragment : Fragment() {
                 setItemViewCacheSize(15)
                 adapter = articlesAdapter.also { it.submitList(state.cells) }
             }
-            binding.newArticleList.adapter = articlesAdapter.also { it.submitList(state.cells) }
         }
         super.onViewCreated(view, savedInstanceState)
     }
