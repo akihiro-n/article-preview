@@ -23,7 +23,11 @@ sealed class NewArticleCell : ComparableListItem {
 
     data class Tags(val tags: List<TagDto>) : NewArticleCell()
 
-    data class NewArticle(val value: ArticleDto, val hasSourceCodeBlock: Boolean) : NewArticleCell()
+    data class NewArticle(
+        val value: ArticleDto,
+        val articleText: String,
+        val hasSourceCodeBlock: Boolean
+    ) : NewArticleCell()
 
     data class Error(val cause: Throwable) : NewArticleCell() {
         @StringRes

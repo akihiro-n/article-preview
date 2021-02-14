@@ -1,5 +1,7 @@
 package com.example.articlepreview.presentation.new_article
 
+import androidx.core.text.HtmlCompat
+import androidx.core.text.HtmlCompat.FROM_HTML_MODE_COMPACT
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
@@ -25,25 +27,28 @@ class NewArticlesViewModel @Inject constructor(
     data class UiState(
         val cells: List<NewArticleCell> = emptyList(),
         val pagingError: Throwable? = null,
-        val currentPage: Int = 0
+        val currentPage: Int = 1
     )
 
     private val _page = MutableStateFlow(1)
     private val _isLoading = MutableStateFlow(false)
-    private val _error = MutableStateFlow<Throwable?>(null)
+    private val _pagingError = MutableStateFlow<Throwable?>(null)
+    private val _otherError = MutableStateFlow<Throwable?>(null)
     private val _success = MutableStateFlow<List<NewArticleCell>>(emptyList())
 
     private val _uiState: StateFlow<UiState> =
-        combine(_page, _isLoading, _error, _success) { page, loading, error, success ->
+        combine(
+            _page,
+            _isLoading,
+            _pagingError,
+            _otherError,
+            _success
+        ) { page, loading, pagingError, otherError, success ->
 
-            val hasArticles = success.filterIsInstance<NewArticleCell.NewArticle>().isNotEmpty()
-            val isEmpty = loading.not() && hasArticles.not() && error == null
-            val pagingError = error?.takeIf { hasArticles }
-            val otherError = error?.takeUnless { hasArticles }
-            val articles = success.takeIf { hasArticles }.orEmpty()
+            val isEmpty = loading.not() && success.isEmpty() && otherError == null
 
             val newCells = emptyList<NewArticleCell>().asSequence()
-                .plus(articles)
+                .plus(success)
                 .plusElement(NewArticleCell.Loading.takeIf { loading })
                 .plusElement(otherError?.let { NewArticleCell.Error(it) })
                 .plusElement(NewArticleCell.Empty.takeIf { isEmpty })
@@ -51,39 +56,45 @@ class NewArticlesViewModel @Inject constructor(
 
             return@combine UiState(
                 cells = newCells.toList(),
-                currentPage = if (hasArticles) page + 1 else page,
+                currentPage = page,
                 pagingError = pagingError,
             )
-        }.stateIn(viewModelScope, SharingStarted.Eagerly, UiState())
+        }
+            .distinctUntilChanged()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, UiState())
 
-    val uiStateLiveData = _uiState
-        .asLiveData(viewModelScope.coroutineContext)
-        .distinctUntilChanged()
+    val uiStateLiveData = _uiState.asLiveData(viewModelScope.coroutineContext)
 
-    init {
-        combine(
-            tagRepository.getPopularTags().map { it.toCells() },
-            articleRepository.getArticles().map { it.toCells() }
-        ) { tag, articles -> tag + articles }
+    fun fetchNewArticles() {
+
+        val fetchTags = tagRepository.getPopularTags()
+            .map { it.toCells() }
+            .onEach { _success.emit(it) }
+
+        val fetchArticles = articleRepository.getArticles().map { it.toCells() }
+
+        combine(fetchTags, fetchArticles) { tag, articles -> tag + articles }
             .onStart { _isLoading.emit(true) }
             .onEach {
                 _success.emit(it)
-                _error.emit(null)
+                _page.emit(nextPage())
+                _otherError.emit(null)
             }
-            .catch { _error.emit(it) }
+            .catch { _otherError.emit(it) }
             .onCompletion { _isLoading.emit(false) }
             .launchIn(viewModelScope)
     }
 
-    fun getNextPageArticles() {
+    fun nextPageArticles() {
         articleRepository.getArticles(nextPage())
             .map { it.toCells() }
             .onStart { _isLoading.emit(true) }
             .onEach {
                 _success.emit(it)
-                _error.emit(null)
+                _page.emit(nextPage())
+                _pagingError.emit(null)
             }
-            .catch { _error.emit(it) }
+            .catch { _pagingError.emit(it) }
             .onCompletion { _isLoading.emit(false) }
             .launchIn(viewModelScope)
     }
@@ -103,6 +114,10 @@ class NewArticlesViewModel @Inject constructor(
         listOf(NewArticleCell.SectionTitle.NewArticlesTitle) + map {
             NewArticleCell.NewArticle(
                 value = it,
+                articleText = HtmlCompat.fromHtml(
+                    it.renderedBody.orEmpty(),
+                    FROM_HTML_MODE_COMPACT
+                ).toString(),
                 hasSourceCodeBlock = parser.parse(it.body).hasSourceCodeBlock()
             )
         }

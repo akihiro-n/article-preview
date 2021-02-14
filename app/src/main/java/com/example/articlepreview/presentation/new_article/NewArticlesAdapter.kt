@@ -6,9 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.articlepreview.data.model.TagDto
-import com.example.articlepreview.databinding.ViewHolderPopularTagBinding
-import com.example.articlepreview.databinding.ViewHolderPopularTagsBinding
-import com.example.articlepreview.databinding.ViewHolderSectionTitleBinding
+import com.example.articlepreview.databinding.*
 import com.example.articlepreview.presentation.new_article.model.NewArticleCell
 import com.example.articlepreview.util.ComparableListItem
 import com.squareup.picasso.Picasso
@@ -19,6 +17,14 @@ class PopularTagsViewHolder(
 
 class SectionTitleViewHolder(
     val binding: ViewHolderSectionTitleBinding
+) : RecyclerView.ViewHolder(binding.root)
+
+class ArticleViewHolder(
+    val binding: ViewHolderArticleBinding
+) : RecyclerView.ViewHolder(binding.root)
+
+class ProgressBarViewHolder(
+    val binding: ViewHolderProgressBarBinding
 ) : RecyclerView.ViewHolder(binding.root)
 
 class NewArticlesAdapter : ListAdapter<NewArticleCell, RecyclerView.ViewHolder>(
@@ -38,6 +44,12 @@ class NewArticlesAdapter : ListAdapter<NewArticleCell, RecyclerView.ViewHolder>(
             NewArticleCell.VIEW_TYPE_TAGS -> PopularTagsViewHolder(
                 binding = ViewHolderPopularTagsBinding.inflate(inflater, parent, false)
             )
+            NewArticleCell.VIEW_TYPE_NEW_ARTICLE -> ArticleViewHolder(
+                binding = ViewHolderArticleBinding.inflate(inflater, parent, false)
+            )
+            NewArticleCell.VIEW_TYPE_LOADING -> ProgressBarViewHolder(
+                binding = ViewHolderProgressBarBinding.inflate(inflater, parent, false)
+            )
             // TODO: 別のViewHolderの実装
             else -> SectionTitleViewHolder(
                 binding = ViewHolderSectionTitleBinding.inflate(inflater, parent, false)
@@ -47,11 +59,18 @@ class NewArticlesAdapter : ListAdapter<NewArticleCell, RecyclerView.ViewHolder>(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
-        if (item is NewArticleCell.Tags && holder is PopularTagsViewHolder) {
-            holder.binding.tagList.adapter = tagsAdapter.also { it.submitList(item.tags) }
-        }
-        if (item is NewArticleCell.SectionTitle && holder is SectionTitleViewHolder) {
-            holder.binding.title.text = holder.binding.root.context.getString(item.titleResId)
+        when {
+            item is NewArticleCell.Tags && holder is PopularTagsViewHolder -> {
+                holder.binding.tagList.adapter = tagsAdapter.also { it.submitList(item.tags) }
+            }
+            item is NewArticleCell.SectionTitle && holder is SectionTitleViewHolder -> {
+                holder.binding.title.text = holder.binding.root.context.getString(item.titleResId)
+            }
+            item is NewArticleCell.NewArticle && holder is ArticleViewHolder -> {
+                holder.binding.article = item
+                // TODO: BindingAdapterを作成してDataBindingで画像を渡せるよう修正する
+                Picasso.get().load(item.value.user.profileImageUrl).into(holder.binding.userImage)
+            }
         }
     }
 }

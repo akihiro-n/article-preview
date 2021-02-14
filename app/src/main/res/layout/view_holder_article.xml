@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="article"
+            type="com.example.articlepreview.presentation.new_article.model.NewArticleCell.NewArticle" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="12dp"
+        android:layout_marginTop="16dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/update_at"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:text="@{article.value.updatedAt}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="1h ago" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/user_image"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:cardCornerRadius="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearance="@style/ShapeAppearanceRoundedCorners"
+                tools:src="@mipmap/ic_launcher" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="@{article.value.user.name}"
+                app:layout_constraintEnd_toStartOf="@id/user_image"
+                app:layout_constraintTop_toTopOf="@id/update_at"
+                tools:text="テストユーザー" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/description"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{article.value.user.description}"
+                android:textAlignment="textEnd"
+                app:layout_constraintEnd_toEndOf="@id/user_name"
+                app:layout_constraintStart_toStartOf="@id/update_at"
+                app:layout_constraintTop_toBottomOf="@id/user_name"
+                tools:text="Androidエンジニア" />
+
+            <View
+                android:id="@+id/divider_user_area"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/black"
+                app:layout_constraintEnd_toEndOf="@id/user_image"
+                app:layout_constraintStart_toStartOf="@id/update_at"
+                app:layout_constraintTop_toBottomOf="@id/user_image" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/article_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:maxLines="1"
+                android:text="@{article.value.body}"
+                android:textSize="21sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/divider_user_area"
+                tools:text="５分でLiveDataの使い方を理解しよう！" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/article_body"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:ellipsize="end"
+                android:maxLines="4"
+                android:text="@{article.articleText}"
+                app:layout_constraintEnd_toEndOf="@id/article_title"
+                app:layout_constraintStart_toStartOf="@id/article_title"
+                app:layout_constraintTop_toBottomOf="@id/article_title"
+                tools:text="Android開発におけるViewModelとLiveDataの役割についてを詳しく解説していきます。\nAndroid開発におけるViewModelとLiveDataの役割についてを詳しく解説していきます。Android開発におけるViewModelとLiveDataの役割についてを詳しく解説していきます。" />
+
+            <View
+                android:id="@+id/divider_article_area"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/black"
+                app:layout_constraintEnd_toEndOf="@id/article_body"
+                app:layout_constraintStart_toStartOf="@id/article_body"
+                app:layout_constraintTop_toBottomOf="@id/article_body" />
+
+            <!--アイコンに置き換える-->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/likes_count_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:text="いいね"
+                app:layout_constraintEnd_toStartOf="@id/likes_count"
+                app:layout_constraintTop_toTopOf="@id/likes_count" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/likes_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="@{article.value.likesCount}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/divider_article_area"
+                app:layout_constraintTop_toBottomOf="@id/divider_article_area"
+                tools:text="20" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>
