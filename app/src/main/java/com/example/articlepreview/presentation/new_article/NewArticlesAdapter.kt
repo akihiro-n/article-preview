@@ -8,12 +8,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.articlepreview.data.model.TagDto
 import com.example.articlepreview.databinding.ViewHolderPopularTagBinding
 import com.example.articlepreview.databinding.ViewHolderPopularTagsBinding
+import com.example.articlepreview.databinding.ViewHolderSectionTitleBinding
 import com.example.articlepreview.presentation.new_article.model.NewArticleCell
 import com.example.articlepreview.util.ComparableListItem
 import com.squareup.picasso.Picasso
 
 class PopularTagsViewHolder(
     val binding: ViewHolderPopularTagsBinding
+) : RecyclerView.ViewHolder(binding.root)
+
+class SectionTitleViewHolder(
+    val binding: ViewHolderSectionTitleBinding
 ) : RecyclerView.ViewHolder(binding.root)
 
 class NewArticlesAdapter : ListAdapter<NewArticleCell, RecyclerView.ViewHolder>(
@@ -26,15 +31,27 @@ class NewArticlesAdapter : ListAdapter<NewArticleCell, RecyclerView.ViewHolder>(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return PopularTagsViewHolder(
-            binding = ViewHolderPopularTagsBinding.inflate(inflater, parent, false)
-        )
+        return when (viewType) {
+            NewArticleCell.VIEW_TYPE_SECTION_TITLE -> SectionTitleViewHolder(
+                binding = ViewHolderSectionTitleBinding.inflate(inflater, parent, false)
+            )
+            NewArticleCell.VIEW_TYPE_TAGS -> PopularTagsViewHolder(
+                binding = ViewHolderPopularTagsBinding.inflate(inflater, parent, false)
+            )
+            // TODO: 別のViewHolderの実装
+            else -> SectionTitleViewHolder(
+                binding = ViewHolderSectionTitleBinding.inflate(inflater, parent, false)
+            )
+        }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = getItem(position)
         if (item is NewArticleCell.Tags && holder is PopularTagsViewHolder) {
             holder.binding.tagList.adapter = tagsAdapter.also { it.submitList(item.tags) }
+        }
+        if (item is NewArticleCell.SectionTitle && holder is SectionTitleViewHolder) {
+            holder.binding.title.text = holder.binding.root.context.getString(item.titleResId)
         }
     }
 }

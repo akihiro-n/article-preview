@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">ArticlePreview</string>
-    <string name="title_new_articles">新着記事一覧</string>
+    <string name="title_new_articles">新着</string>
+    <string name="section_title_popular_tag">人気のあるタグ</string>
+    <string name="section_title_new_articles">新着記事一覧</string>
     <string name="empty_article">記事が見つかりませんでした。検索条件を変更してお試しください。</string>
     <string name="error_rate_limit_get_new_article">
         未認証のためAPI使用が1時間につき60回まで制限されております。\n

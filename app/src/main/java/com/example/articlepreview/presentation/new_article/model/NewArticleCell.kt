@@ -16,6 +16,11 @@ sealed class NewArticleCell : ComparableListItem {
 
     object Loading : NewArticleCell()
 
+    sealed class SectionTitle(open val titleResId: Int) : NewArticleCell() {
+        object PopularTagsTitle : SectionTitle(R.string.section_title_popular_tag)
+        object NewArticlesTitle : SectionTitle(R.string.section_title_new_articles)
+    }
+
     data class Tags(val tags: List<TagDto>) : NewArticleCell()
 
     data class NewArticle(val value: ArticleDto, val hasSourceCodeBlock: Boolean) : NewArticleCell()
@@ -39,6 +44,7 @@ sealed class NewArticleCell : ComparableListItem {
         is Error -> VIEW_TYPE_ERROR
         is Tags -> VIEW_TYPE_TAGS
         is NewArticle -> VIEW_TYPE_NEW_ARTICLE
+        is SectionTitle -> VIEW_TYPE_SECTION_TITLE
     }
 
     companion object {
@@ -47,5 +53,6 @@ sealed class NewArticleCell : ComparableListItem {
         const val VIEW_TYPE_ERROR = 2
         const val VIEW_TYPE_TAGS = 3
         const val VIEW_TYPE_NEW_ARTICLE = 4
+        const val VIEW_TYPE_SECTION_TITLE = 5
     }
 }

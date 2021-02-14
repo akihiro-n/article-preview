@@ -62,9 +62,9 @@ class NewArticlesViewModel @Inject constructor(
 
     init {
         combine(
-            tagRepository.getPopularTags().map { it.toCell() },
+            tagRepository.getPopularTags().map { it.toCells() },
             articleRepository.getArticles().map { it.toCells() }
-        ) { tag, articles -> listOf(tag) + articles }
+        ) { tag, articles -> tag + articles }
             .onStart { _isLoading.emit(true) }
             .onEach {
                 _success.emit(it)
@@ -92,12 +92,18 @@ class NewArticlesViewModel @Inject constructor(
 
     private fun nextPage() = currentUiState().currentPage + 1
 
-    private fun List<TagDto>.toCell() = NewArticleCell.Tags(this)
-
-    private fun List<ArticleDto>.toCells() = map {
-        NewArticleCell.NewArticle(
-            value = it,
-            hasSourceCodeBlock = parser.parse(it.body).hasSourceCodeBlock()
+    @JvmName("toCellsTagDto")
+    private fun List<TagDto>.toCells() =
+        listOf(
+            NewArticleCell.SectionTitle.PopularTagsTitle,
+            NewArticleCell.Tags(this)
         )
-    }
+
+    private fun List<ArticleDto>.toCells() =
+        listOf(NewArticleCell.SectionTitle.NewArticlesTitle) + map {
+            NewArticleCell.NewArticle(
+                value = it,
+                hasSourceCodeBlock = parser.parse(it.body).hasSourceCodeBlock()
+            )
+        }
 }
