@@ -69,7 +69,10 @@ class NewArticlesAdapter : ListAdapter<NewArticleCell, RecyclerView.ViewHolder>(
             item is NewArticleCell.NewArticle && holder is ArticleViewHolder -> {
                 holder.binding.article = item
                 // TODO: BindingAdapterを作成してDataBindingで画像を渡せるよう修正する
-                Picasso.get().load(item.value.user.profileImageUrl).into(holder.binding.userImage)
+                Picasso.get().load(item.value.user.profileImageUrl)
+                    .resize(60,60)
+                    .centerCrop()
+                    .into(holder.binding.userImage)
             }
         }
     }
@@ -101,7 +104,10 @@ class TagsAdapter : ListAdapter<TagDto, PopularTagViewHolder>(
         with(holder.binding) {
             tag = item
             // TODO: BindingAdapterを作成してDataBindingで画像を渡せるよう修正する
-            Picasso.get().load(item.iconUrl).into(tagImage)
+            Picasso.get().load(item.iconUrl)
+                .resize(40, 40)
+                .centerCrop()
+                .into(tagImage)
         }
     }
 }

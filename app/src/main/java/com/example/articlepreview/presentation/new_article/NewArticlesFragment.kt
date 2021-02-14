@@ -35,12 +35,10 @@ class NewArticlesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.uiStateLiveData.observe(viewLifecycleOwner) { state ->
             with(binding.newArticleList) {
-                recycledViewPool.setMaxRecycledViews(
-                    NewArticleCell.VIEW_TYPE_TAGS,
-                    state.cells.filterIsInstance<NewArticleCell.Tags>().count()
-                )
+                setItemViewCacheSize(15)
                 adapter = articlesAdapter.also { it.submitList(state.cells) }
             }
+            binding.newArticleList.adapter = articlesAdapter.also { it.submitList(state.cells) }
         }
         super.onViewCreated(view, savedInstanceState)
     }
