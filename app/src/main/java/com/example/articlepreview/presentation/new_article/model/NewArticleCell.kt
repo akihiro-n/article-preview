@@ -12,19 +12,6 @@ import retrofit2.HttpException
  */
 sealed class NewArticleCell : ComparableListItem {
 
-    override fun id(): String = when (this) {
-        is NewArticle -> value.id
-        else -> javaClass.simpleName
-    }
-
-    override fun viewType(): Int = when (this) {
-        is Empty -> VIEW_TYPE_EMPTY
-        is Loading -> VIEW_TYPE_LOADING
-        is Error -> VIEW_TYPE_ERROR
-        is Tags -> VIEW_TYPE_TAGS
-        is NewArticle -> VIEW_TYPE_NEW_ARTICLE
-    }
-
     object Empty : NewArticleCell()
 
     object Loading : NewArticleCell()
@@ -39,6 +26,19 @@ sealed class NewArticleCell : ComparableListItem {
             is HttpException -> R.string.error_rate_limit_get_new_article
             else -> R.string.error_unknown
         }
+    }
+
+    override fun id(): String = when (this) {
+        is NewArticle -> value.id
+        else -> javaClass.simpleName
+    }
+
+    override fun viewType(): Int = when (this) {
+        is Empty -> VIEW_TYPE_EMPTY
+        is Loading -> VIEW_TYPE_LOADING
+        is Error -> VIEW_TYPE_ERROR
+        is Tags -> VIEW_TYPE_TAGS
+        is NewArticle -> VIEW_TYPE_NEW_ARTICLE
     }
 
     companion object {

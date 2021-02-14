@@ -1,4 +1,4 @@
-package com.example.articlepreview.core.extension
+package com.example.articlepreview.util
 
 import org.commonmark.node.Block
 import org.commonmark.node.Image

@@ -2,8 +2,9 @@ package com.example.articlepreview.presentation.new_article
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
-import com.example.articlepreview.core.extension.hasSourceCodeBlock
+import com.example.articlepreview.util.hasSourceCodeBlock
 import com.example.articlepreview.data.ArticleRepository
 import com.example.articlepreview.data.TagRepository
 import com.example.articlepreview.data.model.ArticleDto
@@ -55,7 +56,9 @@ class NewArticlesViewModel @Inject constructor(
             )
         }.stateIn(viewModelScope, SharingStarted.Eagerly, UiState())
 
-    val uiStateLiveData = _uiState.asLiveData(viewModelScope.coroutineContext)
+    val uiStateLiveData = _uiState
+        .asLiveData(viewModelScope.coroutineContext)
+        .distinctUntilChanged()
 
     init {
         combine(
@@ -87,7 +90,7 @@ class NewArticlesViewModel @Inject constructor(
 
     private fun currentUiState() = _uiState.value
 
-    private fun nextPage() = _uiState.value.currentPage + 1
+    private fun nextPage() = currentUiState().currentPage + 1
 
     private fun List<TagDto>.toCell() = NewArticleCell.Tags(this)
 
