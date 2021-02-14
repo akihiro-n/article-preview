@@ -15,7 +15,8 @@ class ArticleRepository @Inject constructor(
         private const val DEFAULT_PER_PAGE = 20
     }
 
-    fun getArticles(perPage: Int = DEFAULT_PER_PAGE, page: Int = 1) = flow<List<ArticleDto>> {
-        qiitaApi.getArticles("$perPage", "$page")
+    fun getArticles(perPage: Int = DEFAULT_PER_PAGE, page: Int = 1) = flow {
+        val articles = qiitaApi.getArticles("$perPage", "$page")
+        emit(articles)
     }.flowOn(Dispatchers.IO)
 }

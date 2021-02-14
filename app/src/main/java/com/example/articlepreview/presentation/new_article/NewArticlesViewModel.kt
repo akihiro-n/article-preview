@@ -22,19 +22,8 @@ class NewArticlesViewModel @Inject constructor(
 ) : ViewModel() {
 
     data class UiState(
-        /**
-         * RecyclerViewに表示するデータ
-         */
         val cells: List<NewArticleCell> = emptyList(),
-
-        /**
-         * ページング中に発生したエラー
-         */
         val pagingError: Throwable? = null,
-
-        /**
-         * 記事一覧取得APIにおける現在のページ数
-         */
         val currentPage: Int = 0
     )
 

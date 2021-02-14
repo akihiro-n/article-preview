@@ -6,13 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.observe
 import com.example.articlepreview.databinding.FragmentNewArticlesBinding
 import dagger.hilt.android.AndroidEntryPoint
 
+@Suppress("COMPATIBILITY_WARNING")
 @AndroidEntryPoint
 class NewArticlesFragment : Fragment() {
 
     private val viewModel by viewModels<NewArticlesViewModel>()
+    private val adapter by lazy { NewArticlesAdapter() }
+
     private lateinit var binding: FragmentNewArticlesBinding
 
     override fun onCreateView(
@@ -25,7 +29,9 @@ class NewArticlesFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel
+        viewModel.uiStateLiveData.observe(viewLifecycleOwner) { state ->
+            binding.newArticleList.adapter = adapter.also { it.submitList(state.cells) }
+        }
         super.onViewCreated(view, savedInstanceState)
     }
 }

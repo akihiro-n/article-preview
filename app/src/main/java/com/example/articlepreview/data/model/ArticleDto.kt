@@ -3,6 +3,7 @@ package com.example.articlepreview.data.model
 import com.squareup.moshi.Json
 
 data class ArticleDto(
+    val id: String,
     val user: UserDto,
     val title: String,
     val tags: List<ArticleTagDto>,
