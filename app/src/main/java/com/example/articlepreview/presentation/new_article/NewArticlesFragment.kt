@@ -35,7 +35,7 @@ class NewArticlesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.uiStateLiveData.observe(viewLifecycleOwner) { state ->
             with(binding.newArticleList) {
-                setItemViewCacheSize(15)
+                recycledViewPool.setMaxRecycledViews(NewArticleCell.VIEW_TYPE_TAGS, 0)
                 adapter = articlesAdapter.also { it.submitList(state.cells) }
             }
         }

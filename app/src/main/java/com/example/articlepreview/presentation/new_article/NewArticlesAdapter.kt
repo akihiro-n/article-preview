@@ -2,6 +2,7 @@ package com.example.articlepreview.presentation.new_article
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -9,6 +10,7 @@ import com.example.articlepreview.data.model.TagDto
 import com.example.articlepreview.databinding.*
 import com.example.articlepreview.presentation.new_article.model.NewArticleCell
 import com.example.articlepreview.util.ComparableListItem
+import com.example.articlepreview.util.requireDefaultItemAnimator
 import com.squareup.picasso.Picasso
 
 class PopularTagsViewHolder(
@@ -61,7 +63,14 @@ class NewArticlesAdapter : ListAdapter<NewArticleCell, RecyclerView.ViewHolder>(
         val item = getItem(position)
         when {
             item is NewArticleCell.Tags && holder is PopularTagsViewHolder -> {
-                holder.binding.tagList.adapter = tagsAdapter.also { it.submitList(item.tags) }
+                with(holder.binding.tagList) {
+                    requireDefaultItemAnimator().supportsChangeAnimations = false
+                    swapAdapter(
+                        tagsAdapter.also { it.submitList(item.tags) },
+                        false
+                    )
+                    setItemViewCacheSize(item.tags.count())
+                }
             }
             item is NewArticleCell.SectionTitle && holder is SectionTitleViewHolder -> {
                 holder.binding.title.text = holder.binding.root.context.getString(item.titleResId)
@@ -70,7 +79,8 @@ class NewArticlesAdapter : ListAdapter<NewArticleCell, RecyclerView.ViewHolder>(
                 holder.binding.article = item
                 // TODO: BindingAdapterを作成してDataBindingで画像を渡せるよう修正する
                 Picasso.get().load(item.value.user.profileImageUrl)
-                    .resize(60,60)
+                    .noFade()
+                    .fit()
                     .centerCrop()
                     .into(holder.binding.userImage)
             }
@@ -105,9 +115,10 @@ class TagsAdapter : ListAdapter<TagDto, PopularTagViewHolder>(
             tag = item
             // TODO: BindingAdapterを作成してDataBindingで画像を渡せるよう修正する
             Picasso.get().load(item.iconUrl)
-                .resize(40, 40)
+                .noFade()
+                .fit()
                 .centerCrop()
-                .into(tagImage)
+                .into(holder.binding.tagImage)
         }
     }
 }
