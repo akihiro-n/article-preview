@@ -34,7 +34,9 @@ class NewArticlesViewModel @Inject constructor(
     private val _isLoading = MutableStateFlow(false)
     private val _pagingError = MutableStateFlow<Throwable?>(null)
     private val _otherError = MutableStateFlow<Throwable?>(null)
-    private val _success = MutableStateFlow<List<NewArticleCell>>(emptyList())
+    private val _tags = MutableStateFlow<List<NewArticleCell>>(emptyList())
+    private val _articles = MutableStateFlow<List<NewArticleCell>>(emptyList())
+    private val _success = combine(_tags, _articles) { tag, article -> tag + article }
 
     private val _uiState: StateFlow<UiState> =
         combine(
@@ -44,39 +46,30 @@ class NewArticlesViewModel @Inject constructor(
             _otherError,
             _success
         ) { page, loading, pagingError, otherError, success ->
-
             val isEmpty = loading.not() && success.isEmpty() && otherError == null
 
-            val newCells = emptyList<NewArticleCell>().asSequence()
-                .plus(success)
-                .plusElement(NewArticleCell.Loading.takeIf { loading })
-                .plusElement(otherError?.let { NewArticleCell.Error(it) })
-                .plusElement(NewArticleCell.Empty.takeIf { isEmpty })
-                .filterNotNull()
-
             return@combine UiState(
-                cells = newCells.toList(),
+                cells = emptyList<NewArticleCell>().asSequence()
+                    .plus(success)
+                    .plusElement(NewArticleCell.Loading.takeIf { loading })
+                    .plusElement(otherError?.let { NewArticleCell.Error(it) })
+                    .plusElement(NewArticleCell.Empty.takeIf { isEmpty })
+                    .filterNotNull().toList(),
                 currentPage = page,
                 pagingError = pagingError,
             )
         }
-            .distinctUntilChanged()
             .stateIn(viewModelScope, SharingStarted.Eagerly, UiState())
 
     val uiStateLiveData = _uiState.asLiveData(viewModelScope.coroutineContext)
 
     fun fetchNewArticles() {
-
-        val fetchTags = tagRepository.getPopularTags()
-            .map { it.toCells() }
-            .onEach { _success.emit(it) }
-
-        val fetchArticles = articleRepository.getArticles().map { it.toCells() }
-
-        combine(fetchTags, fetchArticles) { tag, articles -> tag + articles }
+        combine(
+            tagRepository.getPopularTags().map { it.toCells() }.onEach { _tags.emit(it) },
+            articleRepository.getArticles().map { it.toCells() }.onEach { _articles.emit(it) }
+        ) { _, _ -> Unit }
             .onStart { _isLoading.emit(true) }
             .onEach {
-                _success.emit(it)
                 _page.emit(nextPage())
                 _otherError.emit(null)
             }
@@ -86,11 +79,10 @@ class NewArticlesViewModel @Inject constructor(
     }
 
     fun nextPageArticles() {
-        articleRepository.getArticles(nextPage())
-            .map { it.toCells() }
+        articleRepository.getArticles(nextPage()).map { it.toCells() }
             .onStart { _isLoading.emit(true) }
             .onEach {
-                _success.emit(it)
+                _articles.emit(it)
                 _page.emit(nextPage())
                 _pagingError.emit(null)
             }
