@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.collect
 class NewArticlesFragment : Fragment() {
 
     companion object {
-        private const val NEW_ARTICLE_LIST_PREFETCH_COUNT = 8
+        private const val NEW_ARTICLE_LIST_PREFETCH_COUNT = 10
     }
 
     private val viewModel by viewModels<NewArticlesViewModel>()
