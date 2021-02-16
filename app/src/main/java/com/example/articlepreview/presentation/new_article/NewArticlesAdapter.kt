@@ -3,55 +3,20 @@ package com.example.articlepreview.presentation.new_article
 import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.articlepreview.data.model.TagDto
 import com.example.articlepreview.databinding.*
 import com.example.articlepreview.presentation.new_article.model.NewArticleCell
 import com.example.articlepreview.util.ComparableListItem
+import com.example.articlepreview.util.StatefulAdapter
 import com.example.articlepreview.util.requireDefaultItemAnimator
 import com.squareup.picasso.Picasso
 
-class PopularTagsViewHolder(
-    val binding: ViewHolderPopularTagsBinding
-) : RecyclerView.ViewHolder(binding.root) {
-
-    fun key(): String = javaClass.simpleName
-}
-
-class SectionTitleViewHolder(
-    val binding: ViewHolderSectionTitleBinding
-) : RecyclerView.ViewHolder(binding.root)
-
-class ArticleViewHolder(
-    val binding: ViewHolderArticleBinding
-) : RecyclerView.ViewHolder(binding.root)
-
-class ProgressBarViewHolder(
-    val binding: ViewHolderProgressBarBinding
-) : RecyclerView.ViewHolder(binding.root)
-
-class NewArticlesAdapter : ListAdapter<NewArticleCell, RecyclerView.ViewHolder>(
+class NewArticlesAdapter : StatefulAdapter<NewArticleCell, RecyclerView.ViewHolder>(
     ComparableListItem.diffUtilItemCallback()
 ) {
 
-    private val tagsAdapter by lazy { TagsAdapter() }
+    private val tagsAdapter = TagAdapter()
     private val tagsRecyclerViewPool = RecyclerView.RecycledViewPool()
-
-    // ネストしたRecyclerView内のスクロール状態を保持しておく
-    private val viewHoldersState = mutableMapOf<String, Parcelable>()
-
-    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
-        when (holder) {
-            is PopularTagsViewHolder -> {
-                val scrollState = holder.binding.tagList.layoutManager?.onSaveInstanceState()
-                viewHoldersState[holder.key()] = scrollState ?: return
-            }
-        }
-        super.onViewDetachedFromWindow(holder)
-    }
 
     override fun getItemViewType(position: Int) = getItem(position).viewType()
 
@@ -65,8 +30,6 @@ class NewArticlesAdapter : ListAdapter<NewArticleCell, RecyclerView.ViewHolder>(
                 binding = ViewHolderPopularTagsBinding.inflate(inflater, parent, false)
             ).apply {
                 binding.tagList.setRecycledViewPool(tagsRecyclerViewPool)
-                // スクロールの状態を復元する
-                binding.tagList.layoutManager?.onRestoreInstanceState(viewHoldersState[key()])
             }
             NewArticleCell.VIEW_TYPE_NEW_ARTICLE -> ArticleViewHolder(
                 binding = ViewHolderArticleBinding.inflate(inflater, parent, false)
@@ -108,39 +71,27 @@ class NewArticlesAdapter : ListAdapter<NewArticleCell, RecyclerView.ViewHolder>(
             }
         }
     }
-}
 
-class PopularTagViewHolder(
-    val binding: ViewHolderPopularTagBinding
-) : RecyclerView.ViewHolder(binding.root)
+    class PopularTagsViewHolder(
+        val binding: ViewHolderPopularTagsBinding
+    ) : StatefulAdapter.ViewHolder(binding.root) {
 
-class TagsAdapter : ListAdapter<TagDto, PopularTagViewHolder>(
-    object : DiffUtil.ItemCallback<TagDto>() {
-        override fun areItemsTheSame(oldItem: TagDto, newItem: TagDto): Boolean =
-            oldItem.id == newItem.id
+        override fun key(): String = javaClass.simpleName
 
-        override fun areContentsTheSame(oldItem: TagDto, newItem: TagDto): Boolean =
-            oldItem == newItem
-    }
-) {
+        override fun savedScrollState(): Parcelable? =
+            binding.tagList.layoutManager?.onSaveInstanceState()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PopularTagViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        return PopularTagViewHolder(
-            binding = ViewHolderPopularTagBinding.inflate(inflater, parent, false)
-        )
-    }
-
-    override fun onBindViewHolder(holder: PopularTagViewHolder, position: Int) {
-        val item = getItem(position)
-        with(holder.binding) {
-            tag = item
-            // TODO: BindingAdapterを作成してDataBindingで画像を渡せるよう修正する
-            Picasso.get().load(item.iconUrl)
-                .noFade()
-                .fit()
-                .centerCrop()
-                .into(holder.binding.tagImage)
+        override fun restoreState(scrollState: Parcelable) {
+            binding.tagList.layoutManager?.onRestoreInstanceState(scrollState)
         }
     }
+
+    class SectionTitleViewHolder(val binding: ViewHolderSectionTitleBinding) :
+        RecyclerView.ViewHolder(binding.root)
+
+    class ArticleViewHolder(val binding: ViewHolderArticleBinding) :
+        RecyclerView.ViewHolder(binding.root)
+
+    class ProgressBarViewHolder(val binding: ViewHolderProgressBarBinding) :
+        RecyclerView.ViewHolder(binding.root)
 }
