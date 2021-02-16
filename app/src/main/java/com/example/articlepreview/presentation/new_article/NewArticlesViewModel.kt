@@ -105,10 +105,6 @@ class NewArticlesViewModel @Inject constructor(
     private fun List<ArticleDto>.toCells() = map {
         NewArticleCell.NewArticle(
             value = it,
-            articleText = HtmlCompat.fromHtml(
-                it.renderedBody.orEmpty(),
-                FROM_HTML_MODE_COMPACT
-            ).toString(),
             hasSourceCodeBlock = parser.parse(it.body).hasSourceCodeBlock()
         )
     }

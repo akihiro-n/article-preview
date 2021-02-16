@@ -1,5 +1,6 @@
 package com.example.articlepreview.presentation.new_article
 
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -15,7 +16,10 @@ import com.squareup.picasso.Picasso
 
 class PopularTagsViewHolder(
     val binding: ViewHolderPopularTagsBinding
-) : RecyclerView.ViewHolder(binding.root)
+) : RecyclerView.ViewHolder(binding.root) {
+
+    fun key(): String = javaClass.simpleName
+}
 
 class SectionTitleViewHolder(
     val binding: ViewHolderSectionTitleBinding
@@ -34,6 +38,20 @@ class NewArticlesAdapter : ListAdapter<NewArticleCell, RecyclerView.ViewHolder>(
 ) {
 
     private val tagsAdapter by lazy { TagsAdapter() }
+    private val tagsRecyclerViewPool = RecyclerView.RecycledViewPool()
+
+    // ネストしたRecyclerView内のスクロール状態を保持しておく
+    private val viewHoldersState = mutableMapOf<String, Parcelable>()
+
+    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
+        when (holder) {
+            is PopularTagsViewHolder -> {
+                val scrollState = holder.binding.tagList.layoutManager?.onSaveInstanceState()
+                viewHoldersState[holder.key()] = scrollState ?: return
+            }
+        }
+        super.onViewDetachedFromWindow(holder)
+    }
 
     override fun getItemViewType(position: Int) = getItem(position).viewType()
 
@@ -45,7 +63,11 @@ class NewArticlesAdapter : ListAdapter<NewArticleCell, RecyclerView.ViewHolder>(
             )
             NewArticleCell.VIEW_TYPE_TAGS -> PopularTagsViewHolder(
                 binding = ViewHolderPopularTagsBinding.inflate(inflater, parent, false)
-            )
+            ).apply {
+                binding.tagList.setRecycledViewPool(tagsRecyclerViewPool)
+                // スクロールの状態を復元する
+                binding.tagList.layoutManager?.onRestoreInstanceState(viewHoldersState[key()])
+            }
             NewArticleCell.VIEW_TYPE_NEW_ARTICLE -> ArticleViewHolder(
                 binding = ViewHolderArticleBinding.inflate(inflater, parent, false)
             )

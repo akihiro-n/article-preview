@@ -1,6 +1,7 @@
 package com.example.articlepreview.presentation.new_article.model
 
 import androidx.annotation.StringRes
+import androidx.core.text.HtmlCompat
 import com.example.articlepreview.R
 import com.example.articlepreview.data.model.ArticleDto
 import com.example.articlepreview.data.model.TagDto
@@ -25,7 +26,6 @@ sealed class NewArticleCell : ComparableListItem {
 
     data class NewArticle(
         val value: ArticleDto,
-        val articleText: String,
         val hasSourceCodeBlock: Boolean
     ) : NewArticleCell() {
 
@@ -33,10 +33,13 @@ sealed class NewArticleCell : ComparableListItem {
             private const val USER_NAME_SEPARATOR = " "
         }
 
-        /**
-         * 「ユーザーID ユーザー名」の表記で返す
-         */
+        /** 「ユーザーID ユーザー名」の表記で保持する */
         val userName = value.user.id + USER_NAME_SEPARATOR + value.user.name
+
+        /** HTML形式のデータからテキスト形式に変換して保持する */
+        val articleText = HtmlCompat
+            .fromHtml(value.renderedBody.orEmpty(), HtmlCompat.FROM_HTML_MODE_COMPACT)
+            .toString()
     }
 
     data class Error(val cause: Throwable) : NewArticleCell() {
