@@ -27,7 +27,17 @@ sealed class NewArticleCell : ComparableListItem {
         val value: ArticleDto,
         val articleText: String,
         val hasSourceCodeBlock: Boolean
-    ) : NewArticleCell()
+    ) : NewArticleCell() {
+
+        companion object {
+            private const val USER_NAME_SEPARATOR = " "
+        }
+
+        /**
+         * 「ユーザーID ユーザー名」の表記で返す
+         */
+        val userName = value.user.id + USER_NAME_SEPARATOR + value.user.name
+    }
 
     data class Error(val cause: Throwable) : NewArticleCell() {
         @StringRes
