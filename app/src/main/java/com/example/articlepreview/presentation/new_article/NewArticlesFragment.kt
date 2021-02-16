@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.articlepreview.databinding.FragmentNewArticlesBinding
 import com.example.articlepreview.presentation.new_article.model.NewArticleCell
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
@@ -28,10 +29,12 @@ class NewArticlesFragment : Fragment() {
     private val articlesAdapter by lazy {
         NewArticlesAdapter().apply {
             onClickArticle = {
-                // TODO: 記事詳細画面への遷移
+                // TODO: 詳細画面へ遷移する
+                showSnackBar(message = "TODO: 詳細画面へ遷移する $it")
             }
             onClickTag = {
-                // TODO: 記事一覧画面へ遷移
+                // TODO: タグを元に一覧画面へ遷移する
+                showSnackBar(message = "TODO: タグを元に一覧画面へ遷移する $it")
             }
         }
     }
@@ -49,17 +52,26 @@ class NewArticlesFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.uiStateLiveData.observe(viewLifecycleOwner) { state ->
-            with(binding.newArticleList) {
-                with(layoutManager as LinearLayoutManager) {
-                    isItemPrefetchEnabled = true
-                    initialPrefetchItemCount = NEW_ARTICLE_LIST_PREFETCH_COUNT
-                }
-                setItemViewCacheSize(NEW_ARTICLE_LIST_PREFETCH_COUNT)
-                recycledViewPool.setMaxRecycledViews(NewArticleCell.VIEW_TYPE_TAGS, 0)
-                adapter = articlesAdapter.also { it.submitList(state.cells) }
+        with(binding.newArticleList) {
+            with(layoutManager as LinearLayoutManager) {
+                isItemPrefetchEnabled = true
+                initialPrefetchItemCount = NEW_ARTICLE_LIST_PREFETCH_COUNT
             }
+            setItemViewCacheSize(NEW_ARTICLE_LIST_PREFETCH_COUNT)
+            recycledViewPool.setMaxRecycledViews(NewArticleCell.VIEW_TYPE_TAGS, 0)
+            adapter = articlesAdapter
+        }
+        viewModel.uiStateLiveData.observe(viewLifecycleOwner) { state ->
+            articlesAdapter.submitList(state.cells)
         }
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    private fun showSnackBar(message: String) {
+        Snackbar.make(
+            requireActivity().findViewById(android.R.id.content),
+            message,
+            Snackbar.LENGTH_SHORT
+        ).show()
     }
 }

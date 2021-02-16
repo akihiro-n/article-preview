@@ -19,9 +19,7 @@ class NewArticlesAdapter : StatefulAdapter<NewArticleCell, RecyclerView.ViewHold
     var onClickArticle: (NewArticleCell.NewArticle) -> Unit = {}
     var onClickTag: (TagDto) -> Unit = {}
 
-    private val tagsAdapter = TagAdapter().also {
-        it.onClickTag = onClickTag
-    }
+    private val tagsAdapter = TagAdapter()
     private val tagsRecyclerViewPool = RecyclerView.RecycledViewPool()
 
     override fun getItemViewType(position: Int) = getItem(position).viewType()
@@ -61,20 +59,23 @@ class NewArticlesAdapter : StatefulAdapter<NewArticleCell, RecyclerView.ViewHold
                         false
                     )
                     setItemViewCacheSize(item.tags.count())
+                    tagsAdapter.onClickTag = onClickTag
                 }
             }
             item is NewArticleCell.SectionTitle && holder is SectionTitleViewHolder -> {
                 holder.binding.title.text = holder.binding.root.context.getString(item.titleResId)
             }
             item is NewArticleCell.NewArticle && holder is ArticleViewHolder -> {
-                holder.binding.article = item
-                // TODO: BindingAdapterを作成してDataBindingで画像を渡せるよう修正する
-                Picasso.get().load(item.value.user.profileImageUrl)
-                    .noFade()
-                    .fit()
-                    .centerCrop()
-                    .into(holder.binding.userImage)
-                onClickArticle.invoke(item)
+                with(holder.binding) {
+                    article = item
+                    // TODO: BindingAdapterを作成してDataBindingで画像を渡せるよう修正する
+                    Picasso.get().load(item.value.user.profileImageUrl)
+                        .noFade()
+                        .fit()
+                        .centerCrop()
+                        .into(userImage)
+                    root.setOnClickListener { onClickArticle.invoke(item) }
+                }
             }
         }
     }
