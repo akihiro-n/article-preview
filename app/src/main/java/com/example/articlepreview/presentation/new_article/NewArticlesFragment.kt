@@ -24,7 +24,17 @@ class NewArticlesFragment : Fragment() {
     }
 
     private val viewModel by viewModels<NewArticlesViewModel>()
-    private val articlesAdapter by lazy { NewArticlesAdapter() }
+
+    private val articlesAdapter by lazy {
+        NewArticlesAdapter().apply {
+            onClickArticle = {
+                // TODO: 記事詳細画面への遷移
+            }
+            onClickTag = {
+                // TODO: 記事一覧画面へ遷移
+            }
+        }
+    }
 
     private lateinit var binding: FragmentNewArticlesBinding
 

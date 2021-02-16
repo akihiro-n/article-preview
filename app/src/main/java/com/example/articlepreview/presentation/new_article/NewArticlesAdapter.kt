@@ -4,6 +4,7 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.articlepreview.data.model.TagDto
 import com.example.articlepreview.databinding.*
 import com.example.articlepreview.presentation.new_article.model.NewArticleCell
 import com.example.articlepreview.util.ComparableListItem
@@ -15,7 +16,12 @@ class NewArticlesAdapter : StatefulAdapter<NewArticleCell, RecyclerView.ViewHold
     ComparableListItem.diffUtilItemCallback()
 ) {
 
-    private val tagsAdapter = TagAdapter()
+    var onClickArticle: (NewArticleCell.NewArticle) -> Unit = {}
+    var onClickTag: (TagDto) -> Unit = {}
+
+    private val tagsAdapter = TagAdapter().also {
+        it.onClickTag = onClickTag
+    }
     private val tagsRecyclerViewPool = RecyclerView.RecycledViewPool()
 
     override fun getItemViewType(position: Int) = getItem(position).viewType()
@@ -68,6 +74,7 @@ class NewArticlesAdapter : StatefulAdapter<NewArticleCell, RecyclerView.ViewHold
                     .fit()
                     .centerCrop()
                     .into(holder.binding.userImage)
+                onClickArticle.invoke(item)
             }
         }
     }

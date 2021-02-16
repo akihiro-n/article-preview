@@ -19,6 +19,8 @@ class TagAdapter : ListAdapter<TagDto, TagAdapter.PopularTagViewHolder>(
     }
 ) {
 
+    var onClickTag: (TagDto) -> Unit = {}
+
     class PopularTagViewHolder(
         val binding: ViewHolderPopularTagBinding
     ) : RecyclerView.ViewHolder(binding.root)
@@ -40,6 +42,7 @@ class TagAdapter : ListAdapter<TagDto, TagAdapter.PopularTagViewHolder>(
                 .fit()
                 .centerCrop()
                 .into(holder.binding.tagImage)
+            root.setOnClickListener { onClickTag.invoke(item) }
         }
     }
 }
