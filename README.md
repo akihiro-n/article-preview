@@ -16,4 +16,4 @@
 ## 感想
 RecyclerViewにRecyclerViewをネストするとスクロールの管理がちょっと辛くなったので下記のようなクラスを作って対応してみた。
 もう少し良い方法はないか模索中
-* https://github.com/akihiro-n/article-preview/blob/master/app/src/main/java/com/example/articlepreview/util/StatefulAdapter.kt#L14
+* https://github.com/akihiro-n/article-preview/blob/master/app/src/main/java/com/example/articlepreview/util/StatefulAdapter.kt
