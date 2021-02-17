@@ -5,7 +5,7 @@
 
 ## アーキテクチャ
 - Single Activity + Fragment構成。画面遷移はNavigation Componentで管理
-- 設計にMVVM + Repositoryパターンを採用。Androidの定番
+- 設計にMVVM + Repositoryパターンを採用。今やすっかりAndroidの定番に
   - データの扱いが複雑になりそうなのでdomain層を設けてUseCase取り入れるか検討中
   - ViewModelの状態はMutableStateFlowで保持、View側の公開にのみLiveDataを使用
     - 現状だとFlowにDataBindingの機能がないのでLiveDataと併用しているが、そこさえ解決されればいよいよFlowだけで十分かもしれない。ライフサイクルに関してもFlowで簡単に扱う手法が出揃ってきている印象
