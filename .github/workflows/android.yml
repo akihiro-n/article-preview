@@ -24,5 +24,5 @@ jobs:
     - name: Deploy Apk
       uses: actions/upload-artifact@v2
       with: 
-        name: artucle-preview-apk
+        name: article-preview-apk
         path: app/build/outputs/apk/debug/app-debug.apk
